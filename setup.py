@@ -19,9 +19,7 @@ setup(
     packages=['everylot'],
     license='GPL-3.0',
     include_package_data=False,
-    install_requires=[
-        'twitter_bot_utils>=0.11.5,<=0.12',
-    ],
+    dependency_links=['https://api.github.com/repos/mitchellhenke/twitter_bot_utils/tarball/master'],
     entry_points={
         'console_scripts': [
             'everylot=everylot.bot:main',
