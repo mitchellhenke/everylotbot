@@ -19,6 +19,9 @@ setup(
     packages=['everylot'],
     license='GPL-3.0',
     include_package_data=False,
+    install_requires=[
+        'pytz==2019.3',
+    ],
     dependency_links=['https://api.github.com/repos/mitchellhenke/twitter_bot_utils/tarball/master'],
     entry_points={
         'console_scripts': [
