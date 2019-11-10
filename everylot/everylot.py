@@ -56,7 +56,7 @@ class EveryLot(object):
 
         # set address format for fetching from DB
         self.search_format = search_format or '{address}, {city} {state}'
-        self.print_format = print_format or '{address}'
+        self.print_format = print_format or '{address}, {zip}'
 
         self.logger.debug('searching google sv with %s', self.search_format)
         self.logger.debug('posting with %s', self.print_format)
