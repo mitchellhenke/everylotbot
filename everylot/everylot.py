@@ -20,17 +20,24 @@ import sqlite3
 import logging
 from io import BytesIO
 import requests
+from datetime import datetime, timedelta
+from pytz import timezone
+import pytz
+import random
 
 QUERY = """SELECT
     *
     FROM lots
     where {} = ?
-    ORDER BY id ASC
+    ORDER BY zip <> ?, id ASC
     LIMIT 1;
 """
 
 SVAPI = "https://maps.googleapis.com/maps/api/streetview"
 GCAPI = "https://maps.googleapis.com/maps/api/geocode/json"
+# 53235, 53295, 53007, 53154
+ZIPS = [53212,53207,53204,53202,53208,53213,53226,53203,53233,53215,53206,53221,53205,53222,53224,53225,
+        53209,53214,53211,53217,53219,53210,53216,53227,53220,53228,53218,53223]
 
 
 class EveryLot(object):
@@ -63,7 +70,10 @@ class EveryLot(object):
             field = 'tweeted'
             value = 0
 
-        curs = self.conn.execute(QUERY.format(field), (value,))
+        zip_field = 'zip'
+        zip_code = self.get_todays_zip()
+
+        curs = self.conn.execute(QUERY.format(field), (value,zip_code,))
         keys = [c[0] for c in curs.description]
         self.lot = dict(zip(keys, curs.fetchone()))
 
@@ -192,3 +202,18 @@ class EveryLot(object):
     def mark_as_tweeted(self, status_id):
         self.conn.execute("UPDATE lots SET tweeted = ? WHERE id = ?", (status_id, self.lot['id'],))
         self.conn.commit()
+
+    def get_todays_zip(self):
+        central_tz = timezone('US/Central')
+        local = central_tz.localize(datetime.today())
+        date = local.strftime('%Y-%m-%d')
+        curs = self.conn.execute("SELECT zip from dates_zips where date = ?", (date,))
+        zip_code = curs.fetchone()
+
+        if zip_code:
+            return zip_code[0]
+        else:
+            zip_code = random.choice(ZIPS)
+            self.conn.execute("INSERT into dates_zips (date, zip) VALUES (?, ?)", (date, zip_code,))
+            self.conn.commit()
+            return zip_code

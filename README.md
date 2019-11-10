@@ -88,6 +88,11 @@ $ sqlite lots.db "CREATE TABLE lots AS SELECT taxid AS id, CONVERT(lat, NUMERIC)
     CONVERT(lon, NUMERIC) AS lon, address, city, state, 0 AS tweeted FROM tmp;"
 ````
 
+````
+$ sqlite3 lots.db "CREATE TABLE dates_zips(date text, zip text)"
+$ sqlite3 lots.db "CREATE INDEX date_index ON dates_zips(date)"
+````
+
 However you create the SQLite db, add an index (skip this step if have a very small database or like waiting for commands to run):
 ````
 $ sqlite3 lots.db "CREATE INDEX i ON lots (id);"
