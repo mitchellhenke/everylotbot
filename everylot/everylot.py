@@ -205,7 +205,9 @@ class EveryLot(object):
 
     def get_todays_zip(self):
         central_tz = timezone('US/Central')
-        local = central_tz.localize(datetime.today())
+        utc = timezone('UTC')
+        utc_date = utc.localize(datetime.today())
+        local = utc_date.astimezone(central_tz)
         date = local.strftime('%Y-%m-%d')
         curs = self.conn.execute("SELECT zip from dates_zips where date = ?", (date,))
         zip_code = curs.fetchone()
